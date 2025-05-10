@@ -4,7 +4,7 @@ namespace NuvoChess.UniversalChessProtocol;
 
 public static class Uci
 {
-    public static bool Exec(Board board, string command)
+    public static bool Exec(ref Board board, string command)
     {
         var commandTokens = command.Split(' ').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
         if (commandTokens.Length == 0) return true;

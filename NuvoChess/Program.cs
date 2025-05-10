@@ -13,7 +13,7 @@ public static class Program
         };
         board.SetFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
-        while (Uci.Exec(board, Console.ReadLine() ?? string.Empty))
+        while (Uci.Exec(ref board, Console.ReadLine() ?? string.Empty))
         {
         }
     }
