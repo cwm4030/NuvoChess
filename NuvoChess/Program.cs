@@ -1,4 +1,5 @@
 ﻿using NuvoChess.BoardState;
+using NuvoChess.UniversalChessProtocol;
 
 namespace NuvoChess;
 
@@ -8,16 +9,12 @@ public static class Program
     {
         var board = new Board
         {
-            Stm = SideToMove.White,
             Squares = stackalloc byte[256]
         };
+        board.SetFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
-        var input = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        while (input != "quit")
+        while (Uci.Exec(board, Console.ReadLine() ?? string.Empty))
         {
-            board.SetFromFen(input);
-            board.PrintBoard();
-            input = Console.ReadLine() ?? string.Empty;
         }
     }
 }
