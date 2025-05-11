@@ -10,7 +10,8 @@ public static class Program
         var board = new Board
         {
             Pieces = stackalloc Piece[PieceIndex.PieceListLength],
-            Squares = stackalloc byte[SquareIndex.SquareListLength]
+            Squares = stackalloc byte[SquareIndex.SquareListLength],
+            AttackPinMap = stackalloc byte[AttackPinMap.AttackPinMapLength]
         };
         board.SetFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 

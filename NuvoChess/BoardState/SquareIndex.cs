@@ -2,88 +2,89 @@ using System.Collections.Frozen;
 
 namespace NuvoChess.BoardState;
 
+
 public static class SquareIndex
 {
-    public const int SquareListLength = 256;
+    public const int SquareListLength = 192;
     // Row 8
-    public const byte A8 = 68;
-    public const byte B8 = 69;
-    public const byte C8 = 70;
-    public const byte D8 = 71;
-    public const byte E8 = 72;
-    public const byte F8 = 73;
-    public const byte G8 = 74;
-    public const byte H8 = 75;
+    public const byte A8 = 36;
+    public const byte B8 = 37;
+    public const byte C8 = 38;
+    public const byte D8 = 39;
+    public const byte E8 = 40;
+    public const byte F8 = 41;
+    public const byte G8 = 42;
+    public const byte H8 = 43;
 
     // Row 7
-    public const byte A7 = 84;
-    public const byte B7 = 85;
-    public const byte C7 = 86;
-    public const byte D7 = 87;
-    public const byte E7 = 88;
-    public const byte F7 = 89;
-    public const byte G7 = 90;
-    public const byte H7 = 91;
+    public const byte A7 = 52;
+    public const byte B7 = 53;
+    public const byte C7 = 54;
+    public const byte D7 = 55;
+    public const byte E7 = 56;
+    public const byte F7 = 57;
+    public const byte G7 = 58;
+    public const byte H7 = 59;
 
     // Row 6
-    public const byte A6 = 100;
-    public const byte B6 = 101;
-    public const byte C6 = 102;
-    public const byte D6 = 103;
-    public const byte E6 = 104;
-    public const byte F6 = 105;
-    public const byte G6 = 106;
-    public const byte H6 = 107;
+    public const byte A6 = 68;
+    public const byte B6 = 69;
+    public const byte C6 = 70;
+    public const byte D6 = 71;
+    public const byte E6 = 72;
+    public const byte F6 = 73;
+    public const byte G6 = 74;
+    public const byte H6 = 75;
 
     // Row 5
-    public const byte A5 = 116;
-    public const byte B5 = 117;
-    public const byte C5 = 118;
-    public const byte D5 = 119;
-    public const byte E5 = 120;
-    public const byte F5 = 121;
-    public const byte G5 = 122;
-    public const byte H5 = 123;
+    public const byte A5 = 84;
+    public const byte B5 = 85;
+    public const byte C5 = 86;
+    public const byte D5 = 87;
+    public const byte E5 = 88;
+    public const byte F5 = 89;
+    public const byte G5 = 90;
+    public const byte H5 = 91;
 
     // Row 4
-    public const byte A4 = 132;
-    public const byte B4 = 133;
-    public const byte C4 = 134;
-    public const byte D4 = 135;
-    public const byte E4 = 136;
-    public const byte F4 = 137;
-    public const byte G4 = 138;
-    public const byte H4 = 139;
+    public const byte A4 = 100;
+    public const byte B4 = 101;
+    public const byte C4 = 102;
+    public const byte D4 = 103;
+    public const byte E4 = 104;
+    public const byte F4 = 105;
+    public const byte G4 = 106;
+    public const byte H4 = 107;
 
     // Row 3
-    public const byte A3 = 148;
-    public const byte B3 = 149;
-    public const byte C3 = 150;
-    public const byte D3 = 151;
-    public const byte E3 = 152;
-    public const byte F3 = 153;
-    public const byte G3 = 154;
-    public const byte H3 = 155;
+    public const byte A3 = 116;
+    public const byte B3 = 117;
+    public const byte C3 = 118;
+    public const byte D3 = 119;
+    public const byte E3 = 120;
+    public const byte F3 = 121;
+    public const byte G3 = 122;
+    public const byte H3 = 123;
 
     // Row 2
-    public const byte A2 = 164;
-    public const byte B2 = 165;
-    public const byte C2 = 166;
-    public const byte D2 = 167;
-    public const byte E2 = 168;
-    public const byte F2 = 169;
-    public const byte G2 = 170;
-    public const byte H2 = 171;
+    public const byte A2 = 132;
+    public const byte B2 = 133;
+    public const byte C2 = 134;
+    public const byte D2 = 135;
+    public const byte E2 = 136;
+    public const byte F2 = 137;
+    public const byte G2 = 138;
+    public const byte H2 = 139;
 
     // Row 1
-    public const byte A1 = 180;
-    public const byte B1 = 181;
-    public const byte C1 = 182;
-    public const byte D1 = 183;
-    public const byte E1 = 184;
-    public const byte F1 = 185;
-    public const byte G1 = 186;
-    public const byte H1 = 187;
+    public const byte A1 = 148;
+    public const byte B1 = 149;
+    public const byte C1 = 150;
+    public const byte D1 = 151;
+    public const byte E1 = 152;
+    public const byte F1 = 153;
+    public const byte G1 = 154;
+    public const byte H1 = 155;
 
 
     public static readonly byte[] OnBoardSquares =
