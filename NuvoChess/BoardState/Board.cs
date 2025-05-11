@@ -74,7 +74,10 @@ public ref struct Board()
     {
         for (var i = 0; i < Squares.Length; i++)
         {
-            Squares[i] = Square.Empty;
+            if (!Fen.SquareIndexToName.ContainsKey(i))
+                Squares[i] = Square.OffBoardFlag;
+            else
+                Squares[i] = Square.Empty;
         }
     }
 
