@@ -71,12 +71,33 @@ public ref struct Board()
         Console.WriteLine();
     }
 
-    public readonly void ClearAttackPinMap()
+    public readonly void PrintAttackPinMap()
     {
-        for (var i = 0; i < AttackPinMap.Length; i++)
+        var backgroundColor = ConsoleColor.DarkBlue;
+        Console.WriteLine("Attack Pin Map:");
+        for (var i = 0; i < 8; i++)
         {
-            AttackPinMap[i] = 0;
+            Console.Write($"   {8 - i} ");
+            for (var j = 0; j < 8; j++)
+            {
+                var index = i * 8 + j;
+                var squareIndex = SquareIndex.OnBoardSquares[index];
+                var attackPin = AttackPinMap[squareIndex] switch
+                {
+                    BoardState.AttackPinMap.Attack => 'A',
+                    BoardState.AttackPinMap.Pin => 'P',
+                    _ => ' '
+                };
+                backgroundColor = SetConsoleColor(true, backgroundColor);
+                Console.Write($" {attackPin} ");
+                Console.ResetColor();
+            }
+            backgroundColor = SetConsoleColor(true, backgroundColor);
+            Console.ResetColor();
+            Console.WriteLine();
         }
+        Console.WriteLine("      a  b  c  d  e  f  g  h");
+        Console.WriteLine();
     }
 
     private static ConsoleColor SetConsoleColor(bool isWhitePiece, ConsoleColor backgroundColor)

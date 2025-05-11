@@ -10,6 +10,8 @@ public static class PieceType
     public const byte KingPiece = 6;
     public const byte WhitePiece = 8;
     public const byte BlackPiece = 16;
+    public const byte PieceMask = 7;
+    public const byte ColorMask = 24;
 
     public static bool IsPawnPiece(byte piece)
     {

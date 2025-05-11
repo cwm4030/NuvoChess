@@ -36,6 +36,11 @@ public static class Uci
                 {
                     board.PrintBoard();
                 }
+                else if (commandTokens.Length > 1 && commandTokens[1] == "print_ap_map")
+                {
+                    MoveGen.GenerateMoves(ref board, []);
+                    board.PrintAttackPinMap();
+                }
                 break;
             default:
                 Console.WriteLine($"Unknown command: {command}");
