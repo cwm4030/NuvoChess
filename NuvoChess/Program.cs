@@ -11,7 +11,7 @@ public static class Program
         {
             Pieces = stackalloc Piece[PieceIndex.PieceListLength],
             Squares = stackalloc byte[SquareIndex.SquareListLength],
-            AttackPinMap = stackalloc byte[AttackPinMap.AttackPinMapLength]
+            AttackCheckPinMap = stackalloc byte[AttackCheckPin.AttackCheckPinLength]
         };
         board.SetFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
