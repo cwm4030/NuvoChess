@@ -3,9 +3,9 @@ namespace NuvoChess.BoardState;
 public ref struct Board()
 {
     public byte Stm { get; set; }
-    public Span<Piece> Pieces { get; set; }
     public byte WhitePieceCount { get; set; }
     public byte BlackPieceCount { get; set; }
+    public Span<Piece> Pieces { get; set; }
     public Span<byte> Squares { get; set; }
     public byte CastleRights { get; set; }
     public byte EnPassantSquare { get; set; }
@@ -105,17 +105,17 @@ public ref struct Board()
             if (index >= SquareIndex.OnBoardSquares.Length) break;
             var squareIndex = SquareIndex.OnBoardSquares[index];
 
-            if (Fen.FenPieces.TryGetValue(c, out var fp))
+            if (Fen.FenToPiece.TryGetValue(c, out var p))
             {
-                var (fenPiece, isFenPiece) = fp;
-                if (isFenPiece)
+                var (piece, isPiece) = p;
+                if (isPiece)
                 {
-                    SetPieceAndSquare(fenPiece, (byte)squareIndex);
+                    SetPieceAndSquare(piece, squareIndex);
                     index += 1;
                 }
                 else
                 {
-                    index += fenPiece;
+                    index += piece;
                 }
             }
         }

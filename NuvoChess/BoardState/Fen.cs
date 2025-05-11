@@ -20,7 +20,7 @@ public static class Fen
         { PieceType.BlackPiece | PieceType.KingPiece, '♚' }
     }.ToFrozenDictionary();
 
-    public static FrozenDictionary<char, (byte, bool)> FenPieces { get; } = new Dictionary<char, (byte, bool)>
+    public static FrozenDictionary<char, (byte, bool)> FenToPiece { get; } = new Dictionary<char, (byte, bool)>
     {
         { 'P', (PieceType.WhitePiece | PieceType.PawnPiece, true) },
         { 'N', (PieceType.WhitePiece | PieceType.KnightPiece, true) },
