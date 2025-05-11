@@ -7,6 +7,7 @@ public ref struct Board()
     public byte BlackPieceCount { get; set; }
     public Span<Piece> Pieces { get; set; }
     public Span<byte> Squares { get; set; }
+    public Span<byte> AttackPinMap { get; set; }
     public byte CastleRights { get; set; }
     public byte EnPassantSquare { get; set; }
     public int HalfMove { get; set; }
@@ -68,6 +69,14 @@ public ref struct Board()
         }
         Console.WriteLine("      a  b  c  d  e  f  g  h");
         Console.WriteLine();
+    }
+
+    public readonly void ClearAttackPinMap()
+    {
+        for (var i = 0; i < AttackPinMap.Length; i++)
+        {
+            AttackPinMap[i] = 0;
+        }
     }
 
     private static ConsoleColor SetConsoleColor(bool isWhitePiece, ConsoleColor backgroundColor)
