@@ -10,11 +10,40 @@ public static class MoveGen
     private static readonly int[] _queenMoves = [-17, -16, -15, -1, 1, 15, 16, 17];
     private static readonly int[] _kingMoves = [-17, -16, -15, -1, 1, 15, 16, 17];
 
-    public static Span<Move> GenerateMoves(ref Board board, Span<Move> moves)
+    public static Span<Move> GenerateMoves(ref Board board, Span<Move> moveList)
     {
         GenerateAttackCheckPinMap(ref board);
+        var stm = board.Stm;
+        var startIndex = PieceIndex.BlackKingIndex;
+        var stopIndex = PieceIndex.BlackKingIndex + board.BlackPieceCount;
+        int[] moves;
+        var moveIndex = 0;
+        bool isSlider;
+        if (stm == PieceType.WhitePiece)
+        {
+            startIndex = PieceIndex.WhiteKingIndex;
+            stopIndex = PieceIndex.WhiteKingIndex + board.WhitePieceCount;
+        }
 
-        return moves;
+        for (var pieceIndex = startIndex; pieceIndex < stopIndex; pieceIndex++)
+        {
+            var piece = board.Pieces[pieceIndex];
+            var pieceType = piece.PieceType;
+            var squareIndex = piece.SquareIndex;
+            (moves, isSlider) = (pieceType & PieceType.PieceMask) switch
+            {
+                PieceType.PawnPiece => stm == PieceType.WhitePiece ? (_pawnWhiteMoves[2..4], false) : (_pawnBlackMoves[2..4], false),
+                PieceType.KnightPiece => (_knightMoves, false),
+                PieceType.BishopPiece => (_bishopMoves, true),
+                PieceType.RookPiece => (_rookMoves, true),
+                PieceType.QueenPiece => (_queenMoves, true),
+                PieceType.KingPiece => (_kingMoves, false),
+                _ => ([], false)
+            };
+        }
+
+
+        return moveList;
     }
 
     private static void GenerateAttackCheckPinMap(ref Board board)

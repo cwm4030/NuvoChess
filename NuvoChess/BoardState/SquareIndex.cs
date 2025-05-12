@@ -2,7 +2,6 @@ using System.Collections.Frozen;
 
 namespace NuvoChess.BoardState;
 
-
 public static class SquareIndex
 {
     public const int SquareListLength = 192;
