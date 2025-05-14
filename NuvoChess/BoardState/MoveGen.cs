@@ -95,11 +95,11 @@ public static class MoveGen
                     }
                     else if (destSquare == PieceType.EmptySquare)
                     {
-                        board.AttackCheckPinMap[destSquareIndex] = AttackCheckPin.Attack;
+                        board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
                     }
                     else
                     {
-                        board.AttackCheckPinMap[destSquareIndex] = AttackCheckPin.Attack;
+                        board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
                         if (destSquare == oppKingIndex)
                         {
                             board.Checks += 1;
@@ -124,18 +124,17 @@ public static class MoveGen
                         }
                         else if (destSquare == PieceType.EmptySquare)
                         {
-                            board.AttackCheckPinMap[destSquareIndex] = AttackCheckPin.Attack;
+                            board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
                         }
                         else
                         {
-                            board.AttackCheckPinMap[destSquareIndex] = AttackCheckPin.Attack;
-                            var destPiece = board.Pieces[destSquare].PieceType;
-                            var sameColor = (pieceType & destPiece & PieceType.ColorMask) != 0;
-                            if (sameColor) break;
-                            if (destSquare == oppKingIndex)
+                            board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
+                            if (PieceType.IsSameColorPiece(pieceType, board.Pieces[destSquare].PieceType)) break;
+                            if (destSquareIndex == oppKingIndex)
                             {
                                 board.Checks += 1;
                                 board.AttackCheckPinMap[squareIndex] |= AttackCheckPin.Check;
+                                break;
                             }
 
                             var pinDestSquareIndex = destSquareIndex;
@@ -154,14 +153,9 @@ public static class MoveGen
                                 }
                                 else
                                 {
-                                    var pinDestPiece = board.Pieces[pinDestSquare].PieceType;
-                                    if (stm == PieceType.WhitePiece && PieceType.IsBlackPiece(pinDestPiece) && PieceType.IsKingPiece(pinDestPiece))
+                                    if (pinDestSquareIndex == oppKingIndex)
                                     {
-                                        board.AttackCheckPinMap[destSquareIndex] = AttackCheckPin.Pin;
-                                    }
-                                    else if (stm == PieceType.BlackPiece && PieceType.IsWhitePiece(pinDestPiece) && PieceType.IsKingPiece(pinDestPiece))
-                                    {
-                                        board.AttackCheckPinMap[destSquareIndex] = AttackCheckPin.Pin;
+                                        board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Pin;
                                     }
                                     break;
                                 }

@@ -45,6 +45,11 @@ public static class PieceType
         return (piece & KingPiece) == KingPiece;
     }
 
+    public static bool IsSameColorPiece(byte piece1, byte piece2)
+    {
+        return (piece1 & piece2 & ColorMask) != 0;
+    }
+
     public static bool IsWhitePiece(byte piece)
     {
         return (piece & WhitePiece) == WhitePiece;
