@@ -51,14 +51,9 @@ public ref struct Board()
             {
                 var index = i * 8 + j;
                 var onBoardIndex = SquareIndex.OnBoardSquares[index];
-                var fen = ' ';
                 var square = Squares[onBoardIndex];
-                var piece = (byte)0;
-                if (SquareType.ContainsPiece(square))
-                {
-                    piece = Pieces[square].PieceType;
-                    fen = Fen.PieceToFen.TryGetValue(piece, out var fenPiece) ? fenPiece : ' ';
-                }
+                var piece = Pieces[square].PieceType;
+                var fen = Fen.PieceToFen.TryGetValue(piece, out var fenPiece) ? fenPiece : ' ';
 
                 backgroundColor = SetConsoleColor(PieceType.IsWhitePiece(piece), backgroundColor);
                 Console.Write($" {fen} ");
@@ -114,13 +109,15 @@ public ref struct Board()
             Pieces[i].PieceType = 0;
             Pieces[i].SquareIndex = 0;
         }
+        Pieces[PieceType.EmptySquare].PieceType = PieceType.EmptySquare;
+        Pieces[PieceType.GuardSquare].PieceType = PieceType.GuardSquare;
 
         for (var i = 0; i < Squares.Length; i++)
         {
             if (!SquareIndex.SquareIndexToName.ContainsKey((byte)i))
-                Squares[i] = SquareType.OffBoardSquare;
+                Squares[i] = PieceType.GuardSquare;
             else
-                Squares[i] = SquareType.EmptySquare;
+                Squares[i] = PieceType.EmptySquare;
         }
     }
 

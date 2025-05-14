@@ -2,16 +2,18 @@ namespace NuvoChess.BoardState;
 
 public static class PieceType
 {
-    public const byte PawnPiece = 1;
-    public const byte KnightPiece = 2;
-    public const byte BishopPiece = 3;
-    public const byte RookPiece = 4;
-    public const byte QueenPiece = 5;
-    public const byte KingPiece = 6;
-    public const byte WhitePiece = 8;
-    public const byte BlackPiece = 16;
-    public const byte PieceMask = 7;
-    public const byte ColorMask = 24;
+    public const byte EmptySquare = 0;
+    public const byte GuardSquare = 1;
+    public const byte PawnPiece = 2;
+    public const byte KnightPiece = 4;
+    public const byte BishopPiece = 6;
+    public const byte RookPiece = 8;
+    public const byte QueenPiece = 10;
+    public const byte KingPiece = 12;
+    public const byte WhitePiece = 16;
+    public const byte BlackPiece = 32;
+    public const byte PieceMask = 14;
+    public const byte ColorMask = 48;
 
     public static bool IsPawnPiece(byte piece)
     {
@@ -51,5 +53,10 @@ public static class PieceType
     public static bool IsBlackPiece(byte piece)
     {
         return (piece & BlackPiece) == BlackPiece;
+    }
+
+    public static bool IsPiece(byte piece)
+    {
+        return (piece & PieceMask) != EmptySquare;
     }
 }
