@@ -36,6 +36,10 @@ public static class Uci
                 {
                     board.PrintBoard();
                 }
+                else if (commandTokens.Length > 1 && commandTokens[1] == "print_simple")
+                {
+                    board.PrintSimpleBoard();
+                }
                 else if (commandTokens.Length > 1 && commandTokens[1] == "print_acp_map")
                 {
                     MoveGen.GenerateMoves(ref board, []);

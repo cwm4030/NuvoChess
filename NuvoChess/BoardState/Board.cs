@@ -67,6 +67,40 @@ public ref struct Board()
         Console.WriteLine();
     }
 
+    public readonly void PrintSimpleBoard()
+    {
+        var backgroundColor = ConsoleColor.DarkBlue;
+        var sideToMove = Stm == PieceType.WhitePiece ? "White" : "Black";
+        var castleRights = Castling.ToString(CastleRights);
+        var enPassantSquare = EnPassantSquare == 0 ? "-" : SquareIndex.SquareIndexToName[EnPassantSquare];
+        Console.WriteLine($"Side to move: {sideToMove}");
+        Console.WriteLine($"Castle rights: {castleRights}");
+        Console.WriteLine($"En passant square: {enPassantSquare}");
+        Console.WriteLine($"Half move: {HalfMove}");
+        Console.WriteLine($"Full move: {FullMove}");
+        for (var i = 0; i < 8; i++)
+        {
+            Console.Write($"   {8 - i} ");
+            for (var j = 0; j < 8; j++)
+            {
+                var index = i * 8 + j;
+                var onBoardIndex = SquareIndex.OnBoardSquares[index];
+                var square = Squares[onBoardIndex];
+                var piece = Pieces[square].PieceType;
+                var fen = Fen.PieceToSimpleFen.TryGetValue(piece, out var fenPiece) ? fenPiece : ' ';
+
+                backgroundColor = SetConsoleColor(PieceType.IsWhitePiece(piece), backgroundColor);
+                Console.Write($" {fen} ");
+                Console.ResetColor();
+            }
+            backgroundColor = SetConsoleColor(true, backgroundColor);
+            Console.ResetColor();
+            Console.WriteLine();
+        }
+        Console.WriteLine("      a  b  c  d  e  f  g  h");
+        Console.WriteLine();
+    }
+
     public readonly void PrintAttackCheckPinMap()
     {
         var backgroundColor = ConsoleColor.DarkBlue;

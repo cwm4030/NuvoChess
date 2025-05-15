@@ -13,10 +13,11 @@ public static class Program
             Squares = stackalloc byte[SquareIndex.SquareListLength],
             AttackCheckPinMap = stackalloc byte[AttackCheckPin.AttackCheckPinLength]
         };
-        board.SetFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
-        while (Uci.Exec(ref board, Console.ReadLine() ?? string.Empty))
+        var input = "position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        while (Uci.Exec(ref board, input))
         {
+            input = Console.ReadLine() ?? string.Empty;
         }
     }
 }

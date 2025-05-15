@@ -20,6 +20,22 @@ public static class Fen
         { PieceType.BlackPiece | PieceType.KingPiece, '♚' }
     }.ToFrozenDictionary();
 
+    public static FrozenDictionary<byte, char> PieceToSimpleFen { get; } = new Dictionary<byte, char>
+    {
+        { PieceType.WhitePiece | PieceType.PawnPiece, 'P' },
+        { PieceType.WhitePiece | PieceType.KnightPiece, 'N' },
+        { PieceType.WhitePiece | PieceType.BishopPiece, 'B' },
+        { PieceType.WhitePiece | PieceType.RookPiece, 'R' },
+        { PieceType.WhitePiece | PieceType.QueenPiece, 'Q' },
+        { PieceType.WhitePiece | PieceType.KingPiece, 'K' },
+        { PieceType.BlackPiece | PieceType.PawnPiece, 'p' },
+        { PieceType.BlackPiece | PieceType.KnightPiece, 'n' },
+        { PieceType.BlackPiece | PieceType.BishopPiece, 'b' },
+        { PieceType.BlackPiece | PieceType.RookPiece, 'r' },
+        { PieceType.BlackPiece | PieceType.QueenPiece, 'q' },
+        { PieceType.BlackPiece | PieceType.KingPiece, 'k' }
+    }.ToFrozenDictionary();
+
     public static FrozenDictionary<char, (byte, bool)> FenToPiece { get; } = new Dictionary<char, (byte, bool)>
     {
         { 'P', (PieceType.WhitePiece | PieceType.PawnPiece, true) },
