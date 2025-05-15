@@ -1,5 +1,5 @@
 ﻿using NuvoChess.BoardState;
-using NuvoChess.UniversalChessProtocol;
+using NuvoChess.UniversalChessInterface;
 
 namespace NuvoChess;
 

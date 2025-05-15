@@ -1,6 +1,6 @@
 using NuvoChess.BoardState;
 
-namespace NuvoChess.UniversalChessProtocol;
+namespace NuvoChess.UniversalChessInterface;
 
 public static class Uci
 {
