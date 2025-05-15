@@ -25,7 +25,7 @@ public ref struct Board()
         var fm = (fenStrs.Length >= 6 ? fenStrs[5] : string.Empty).ToLower();
 
         ClearPiecesAndSquares();
-        SetPieces(pieces);
+        SetPiecesAndSquares(pieces);
         SetSideToMove(stm);
         SetCastleRights(cr);
         EnPassantSquare = SquareIndex.SquareNameToIndex.TryGetValue(ep, out var epIndex) ? epIndex : (byte)0;
@@ -155,7 +155,7 @@ public ref struct Board()
         }
     }
 
-    private void SetPieces(string pieces)
+    private void SetPiecesAndSquares(string pieces)
     {
         var index = 0;
         foreach (var c in pieces)
