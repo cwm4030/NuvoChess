@@ -1,6 +1,6 @@
 namespace NuvoChess.BoardState;
 
-public ref struct Board()
+public ref struct Board
 {
     public byte Stm { get; set; }
     public byte WhitePieceCount { get; set; }
@@ -13,6 +13,13 @@ public ref struct Board()
     public byte EnPassantSquare { get; set; }
     public int HalfMove { get; set; }
     public int FullMove { get; set; }
+
+    public Board(Span<Piece> pieces, Span<byte> squares, Span<byte> attackCheckPinMap)
+    {
+        Pieces = pieces;
+        Squares = squares;
+        AttackCheckPinMap = attackCheckPinMap;
+    }
 
     public void SetFromFen(string fen)
     {

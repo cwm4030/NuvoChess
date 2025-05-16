@@ -7,13 +7,10 @@ public static class Program
 {
     public static void Main()
     {
-        var board = new Board
-        {
-            Pieces = stackalloc Piece[PieceIndex.PieceListLength],
-            Squares = stackalloc byte[SquareIndex.SquareListLength],
-            AttackCheckPinMap = stackalloc byte[AttackCheckPin.AttackCheckPinLength]
-        };
-
+        Span<Piece> pieces = stackalloc Piece[PieceIndex.PieceListLength];
+        Span<byte> squares = stackalloc byte[SquareIndex.SquareListLength];
+        Span<byte> attackCheckPinMap = stackalloc byte[AttackCheckPin.AttackCheckPinLength];
+        var board = new Board(pieces, squares, attackCheckPinMap);
         var input = "position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         while (Uci.Exec(ref board, input))
         {

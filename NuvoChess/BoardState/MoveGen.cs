@@ -12,7 +12,7 @@ public static class MoveGen
 
     public static Span<Move> GenerateMoves(ref Board board, Span<Move> moveList)
     {
-        GenerateAttackCheckPinMap(ref board);
+        GenerateAcpMap(ref board);
         var stm = board.Stm;
         var startIndex = PieceIndex.BlackKingIndex;
         var stopIndex = PieceIndex.BlackKingIndex + board.BlackPieceCount;
@@ -28,7 +28,6 @@ public static class MoveGen
         {
             var piece = board.Pieces[pieceIndex];
             var pieceType = piece.PieceType;
-            var squareIndex = piece.SquareIndex;
             (moves, isSlider) = (pieceType & PieceType.PieceMask) switch
             {
                 PieceType.PawnPiece => stm == PieceType.WhitePiece ? (_pawnWhiteMoves[2..4], false) : (_pawnBlackMoves[2..4], false),
@@ -45,7 +44,7 @@ public static class MoveGen
         return moveList;
     }
 
-    private static void GenerateAttackCheckPinMap(ref Board board)
+    private static void GenerateAcpMap(ref Board board)
     {
         for (var i = 0; i < board.AttackCheckPinMap.Length; i++)
         {
@@ -85,85 +84,100 @@ public static class MoveGen
 
             if (!isSlider)
             {
-                for (var i = 0; i < moves.Length; i++)
-                {
-                    var destSquareIndex = squareIndex + moves[i];
-                    var destSquare = board.Squares[destSquareIndex];
-                    if (destSquare == PieceType.GuardSquare)
-                    {
-                        continue;
-                    }
-                    else if (destSquare == PieceType.EmptySquare)
-                    {
-                        board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
-                    }
-                    else
-                    {
-                        board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
-                        if (destSquare == oppKingIndex)
-                        {
-                            board.Checks += 1;
-                            board.AttackCheckPinMap[squareIndex] |= AttackCheckPin.Check;
-                        }
-                    }
-                }
+                GenerateNonSliderAcpMap(ref board, moves, squareIndex, oppKingIndex);
             }
             else
             {
-                for (var i = 0; i < moves.Length; i++)
+                GenerateSliderAcpMap(ref board, moves, squareIndex, pieceType, oppKingIndex);
+            }
+        }
+    }
+
+    private static void GenerateNonSliderAcpMap(ref Board board, int[] moves, int squareIndex, int oppKingIndex)
+    {
+        for (var i = 0; i < moves.Length; i++)
+        {
+            var destSquareIndex = squareIndex + moves[i];
+            var destSquare = board.Squares[destSquareIndex];
+            if (destSquare == PieceType.GuardSquare) continue;
+
+            if (destSquare == PieceType.EmptySquare)
+            {
+                board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
+            }
+            else
+            {
+                board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
+                if (destSquare == oppKingIndex)
                 {
-                    var direction = moves[i];
-                    var destSquareIndex = squareIndex;
-                    while (true)
+                    board.Checks += 1;
+                    board.AttackCheckPinMap[squareIndex] |= AttackCheckPin.Check;
+                }
+            }
+        }
+    }
+
+    private static void GenerateSliderAcpMap(ref Board board, int[] moves, int squareIndex, byte pieceType, int oppKingIndex)
+    {
+        for (var i = 0; i < moves.Length; i++)
+        {
+            var direction = moves[i];
+            var destSquareIndex = squareIndex;
+            while (true)
+            {
+                destSquareIndex += direction;
+                var destSquare = board.Squares[destSquareIndex];
+                if (destSquare == PieceType.GuardSquare)
+                {
+                    break;
+                }
+                else if (destSquare == PieceType.EmptySquare)
+                {
+                    board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
+                }
+                else
+                {
+                    board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
+                    if (PieceType.IsSameColorPiece(pieceType, board.Pieces[destSquare].PieceType))
                     {
-                        destSquareIndex += (byte)direction;
-                        var destSquare = board.Squares[destSquareIndex];
-                        if (destSquare == PieceType.GuardSquare)
-                        {
-                            break;
-                        }
-                        else if (destSquare == PieceType.EmptySquare)
-                        {
-                            board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
-                        }
-                        else
-                        {
-                            board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Attack;
-                            if (PieceType.IsSameColorPiece(pieceType, board.Pieces[destSquare].PieceType)) break;
-                            if (destSquareIndex == oppKingIndex)
-                            {
-                                board.Checks += 1;
-                                board.AttackCheckPinMap[squareIndex] |= AttackCheckPin.Check;
-                                break;
-                            }
-
-                            var pinDestSquareIndex = destSquareIndex;
-                            while (true)
-                            {
-                                pinDestSquareIndex += (byte)direction;
-                                var pinDestSquare = board.Squares[pinDestSquareIndex];
-
-                                if (pinDestSquare == PieceType.GuardSquare)
-                                {
-                                    break;
-                                }
-                                else if (pinDestSquare == PieceType.EmptySquare)
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    if (pinDestSquareIndex == oppKingIndex)
-                                    {
-                                        board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Pin;
-                                    }
-                                    break;
-                                }
-                            }
-                            break;
-                        }
+                        break;
+                    }
+                    else if (destSquareIndex == oppKingIndex)
+                    {
+                        board.Checks += 1;
+                        board.AttackCheckPinMap[squareIndex] |= AttackCheckPin.Check;
+                        break;
+                    }
+                    else
+                    {
+                        GeneratePinSliderAcpMap(ref board, destSquareIndex, direction, oppKingIndex);
+                        break;
                     }
                 }
+            }
+        }
+    }
+
+    public static void GeneratePinSliderAcpMap(ref Board board, int destSquareIndex, int direction, int oppKingIndex)
+    {
+        var pinDestSquareIndex = destSquareIndex;
+        while (true)
+        {
+            pinDestSquareIndex += direction;
+            var pinDestSquare = board.Squares[pinDestSquareIndex];
+            if (pinDestSquare == PieceType.EmptySquare) continue;
+
+            if (pinDestSquare == PieceType.GuardSquare)
+            {
+                break;
+            }
+            else
+            {
+                if (pinDestSquareIndex == oppKingIndex)
+                {
+                    board.AttackCheckPinMap[destSquareIndex] |= AttackCheckPin.Pin;
+                }
+                break;
             }
         }
     }
