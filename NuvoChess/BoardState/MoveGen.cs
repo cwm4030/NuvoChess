@@ -2,7 +2,26 @@ namespace NuvoChess.BoardState;
 
 public static class MoveGen
 {
-    private static readonly byte[] _pawnStartSquares =
+    private static readonly int[] s_rayDetection =
+    [
+        17, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 15,
+        0, 0, 17, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 15,
+        0, 0, 0, 0, 17, 0, 0, 0, 0, 16, 0, 0, 0, 0, 15,
+        0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 16, 0, 0, 0, 15,
+        0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 16, 0, 0, 15,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 16, 0, 15,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 16, 15,
+        0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0,
+        -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, -15,
+        -16, -17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -15,
+        0, -16, 0, -17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -15,
+        0, 0, -16, 0, 0, -17, 0, 0, 0, 0, 0, 0, 0, 0, -15,
+        0, 0, 0, -16, 0, 0, 0, -17, 0, 0, 0, 0, 0, 0, -15,
+        0, 0, 0, 0, -16, 0, 0, 0, 0, -17, 0, 0, 0, 0, -15,
+        0, 0, 0, 0, 0, -16, 0, 0, 0, 0, 0, -17, 0, 0, -15,
+        0, 0, 0, 0, 0, 0, -16, 0, 0, 0, 0, 0, 0, -17, 0
+    ];
+    private static readonly byte[] s_pawnStartSquares =
     [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -15,9 +34,9 @@ public static class MoveGen
         0, 0, 0, 0, 16, 16, 16, 16, 16, 16, 16, 16, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     ];
-    private static readonly byte[] _pawnPromotionSquares =
+    private static readonly byte[] s_pawnPromotionSquares =
     [
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -30,28 +49,28 @@ public static class MoveGen
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 32, 32, 32, 32, 32, 32, 32, 32, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     ];
-    private static readonly int[] _pawnWhiteMoves = [-16, -32, -17, -15];
-    private static readonly int[] _pawnBlackMoves = [16, 32, 17, 15];
-    private static readonly int[] _knightMoves = [-18, -33, -31, -14, 14, 31, 33, 18];
-    private static readonly int[] _bishopMoves = [-17, -15, 15, 17];
-    private static readonly int[] _rookMoves = [-16, -1, 1, 16];
-    private static readonly int[] _queenMoves = [-17, -16, -15, -1, 1, 15, 16, 17];
-    private static readonly int[] _kingMoves = [-17, -16, -15, -1, 1, 15, 16, 17];
+    private static readonly int[] s_pawnWhiteMoves = [-16, -32, -17, -15];
+    private static readonly int[] s_pawnBlackMoves = [16, 32, 17, 15];
+    private static readonly int[] s_knightMoves = [-18, -33, -31, -14, 14, 31, 33, 18];
+    private static readonly int[] s_bishopMoves = [-17, -15, 15, 17];
+    private static readonly int[] s_rookMoves = [-16, -1, 1, 16];
+    private static readonly int[] s_queenMoves = [-17, -16, -15, -1, 1, 15, 16, 17];
+    private static readonly int[] s_kingMoves = [-17, -16, -15, -1, 1, 15, 16, 17];
 
     public static Span<Move> GenerateMoves(ref Board board, Span<Move> moveList)
     {
         GenerateAcpMap(ref board);
         var stm = board.Stm;
         var startIndex = PieceIndex.BlackKingIndex;
-        var stopIndex = PieceIndex.BlackKingIndex + board.BlackPieceCount;
+        var stopIndex = PieceIndex.BlackKingIndex + 16;
         int[] moves;
         bool isSlider;
         if (stm == PieceType.WhitePiece)
         {
             startIndex = PieceIndex.WhiteKingIndex;
-            stopIndex = PieceIndex.WhiteKingIndex + board.WhitePieceCount;
+            stopIndex = PieceIndex.WhiteKingIndex + 16;
         }
 
         for (var pieceIndex = startIndex; pieceIndex < stopIndex; pieceIndex++)
@@ -60,12 +79,12 @@ public static class MoveGen
             var pieceType = piece.PieceType;
             (moves, isSlider) = (pieceType & PieceType.PieceMask) switch
             {
-                PieceType.PawnPiece => stm == PieceType.WhitePiece ? (_pawnWhiteMoves[2..4], false) : (_pawnBlackMoves[2..4], false),
-                PieceType.KnightPiece => (_knightMoves, false),
-                PieceType.BishopPiece => (_bishopMoves, true),
-                PieceType.RookPiece => (_rookMoves, true),
-                PieceType.QueenPiece => (_queenMoves, true),
-                PieceType.KingPiece => (_kingMoves, false),
+                PieceType.PawnPiece => stm == PieceType.WhitePiece ? (s_pawnWhiteMoves[2..4], false) : (s_pawnBlackMoves[2..4], false),
+                PieceType.KnightPiece => (s_knightMoves, false),
+                PieceType.BishopPiece => (s_bishopMoves, true),
+                PieceType.RookPiece => (s_rookMoves, true),
+                PieceType.QueenPiece => (s_queenMoves, true),
+                PieceType.KingPiece => (s_kingMoves, false),
                 _ => ([], false)
             };
         }
@@ -85,7 +104,7 @@ public static class MoveGen
         var oppKingIndex = board.Pieces[PieceIndex.BlackKingIndex].SquareIndex;
         var stm = PieceType.WhitePiece;
         var startIndex = PieceIndex.WhiteKingIndex;
-        var stopIndex = PieceIndex.WhiteKingIndex + board.WhitePieceCount;
+        var stopIndex = PieceIndex.WhiteKingIndex + 16;
         int[] moves;
         bool isSlider;
         if (board.Stm == PieceType.WhitePiece)
@@ -103,12 +122,12 @@ public static class MoveGen
             var squareIndex = piece.SquareIndex;
             (moves, isSlider) = (pieceType & PieceType.PieceMask) switch
             {
-                PieceType.PawnPiece => stm == PieceType.WhitePiece ? (_pawnWhiteMoves[2..4], false) : (_pawnBlackMoves[2..4], false),
-                PieceType.KnightPiece => (_knightMoves, false),
-                PieceType.BishopPiece => (_bishopMoves, true),
-                PieceType.RookPiece => (_rookMoves, true),
-                PieceType.QueenPiece => (_queenMoves, true),
-                PieceType.KingPiece => (_kingMoves, false),
+                PieceType.PawnPiece => stm == PieceType.WhitePiece ? (s_pawnWhiteMoves[2..4], false) : (s_pawnBlackMoves[2..4], false),
+                PieceType.KnightPiece => (s_knightMoves, false),
+                PieceType.BishopPiece => (s_bishopMoves, true),
+                PieceType.RookPiece => (s_rookMoves, true),
+                PieceType.QueenPiece => (s_queenMoves, true),
+                PieceType.KingPiece => (s_kingMoves, false),
                 _ => ([], false)
             };
 
@@ -190,6 +209,9 @@ public static class MoveGen
 
     public static void GeneratePinSliderAcpMap(ref Board board, int destSquareIndex, int direction, int oppKingIndex)
     {
+        var possiblePin = s_rayDetection[destSquareIndex - oppKingIndex + 119] == direction;
+        if (!possiblePin) return;
+        
         var pinDestSquareIndex = destSquareIndex;
         while (true)
         {
