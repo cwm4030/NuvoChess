@@ -2,6 +2,7 @@ namespace NuvoChess.BoardState;
 
 public static class MoveGen
 {
+    private const int _rayDetectionOffset = -1 * (SquareIndex.A8 - SquareIndex.H1);
     private static readonly int[] s_rayDetection =
     [
         17, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 15,
@@ -209,9 +210,9 @@ public static class MoveGen
 
     public static void GeneratePinSliderAcpMap(ref Board board, int destSquareIndex, int direction, int oppKingIndex)
     {
-        var possiblePin = s_rayDetection[destSquareIndex - oppKingIndex + 119] == direction;
+        var possiblePin = s_rayDetection[destSquareIndex - oppKingIndex + _rayDetectionOffset] == direction;
         if (!possiblePin) return;
-        
+
         var pinDestSquareIndex = destSquareIndex;
         while (true)
         {
