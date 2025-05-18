@@ -12,6 +12,7 @@ public static class PieceType
     public const byte KingPiece = 12;
     public const byte WhitePiece = 16;
     public const byte BlackPiece = 32;
+    public const byte CapturedPiece = 64;
     public const byte PieceMask = 14;
     public const byte ColorMask = 48;
 
@@ -58,6 +59,11 @@ public static class PieceType
     public static bool IsBlackPiece(byte piece)
     {
         return (piece & BlackPiece) == BlackPiece;
+    }
+
+    public static bool IsCapturedPiece(byte piece)
+    {
+        return (piece & CapturedPiece) == CapturedPiece;
     }
 
     public static bool IsPiece(byte piece)

@@ -90,7 +90,6 @@ public static class MoveGen
             };
         }
 
-
         return moveList;
     }
 

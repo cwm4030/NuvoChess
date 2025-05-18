@@ -147,11 +147,11 @@ public ref struct Board
         BlackPieceCount = 1;
         for (var i = 0; i < Pieces.Length; i++)
         {
-            Pieces[i].PieceType = 0;
+            Pieces[i].PieceType = PieceType.CapturedPiece;
             Pieces[i].SquareIndex = 0;
         }
-        Pieces[PieceType.EmptySquare].PieceType = PieceType.EmptySquare;
-        Pieces[PieceType.GuardSquare].PieceType = PieceType.GuardSquare;
+        Pieces[PieceType.EmptySquare].PieceType |= PieceType.EmptySquare;
+        Pieces[PieceType.GuardSquare].PieceType |= PieceType.GuardSquare;
 
         for (var i = 0; i < Squares.Length; i++)
         {
