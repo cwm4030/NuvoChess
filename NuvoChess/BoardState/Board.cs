@@ -7,7 +7,7 @@ public ref struct Board
     public byte BlackPieceCount { get; set; }
     public Span<Piece> Pieces { get; set; }
     public Span<byte> Squares { get; set; }
-    public Span<byte> AttackCheckPinMap { get; set; }
+    public Span<byte> AttackDefendPinMap { get; set; }
     public byte Checks { get; set; }
     public byte CastleRights { get; set; }
     public byte EnPassantSquare { get; set; }
@@ -18,7 +18,7 @@ public ref struct Board
     {
         Pieces = pieces;
         Squares = squares;
-        AttackCheckPinMap = attackCheckPinMap;
+        AttackDefendPinMap = attackCheckPinMap;
     }
 
     public void SetFromFen(string fen)
@@ -108,7 +108,7 @@ public ref struct Board
         Console.WriteLine();
     }
 
-    public readonly void PrintAttackCheckPinMap()
+    public readonly void PrintAttackDefendPinMap()
     {
         var backgroundColor = ConsoleColor.DarkBlue;
         Console.WriteLine($"Checks: {Checks}");
@@ -120,7 +120,7 @@ public ref struct Board
             {
                 var index = i * 8 + j;
                 var squareIndex = SquareIndex.OnBoardSquares[index];
-                var attackPin = AttackCheckPin.ToString(AttackCheckPinMap[squareIndex]);
+                var attackPin = AttackCheckPin.ToString(AttackDefendPinMap[squareIndex]);
                 backgroundColor = SetConsoleColor(true, backgroundColor);
                 Console.Write($"{attackPin}");
                 Console.ResetColor();

@@ -40,10 +40,10 @@ public static class Uci
                 {
                     board.PrintSimpleBoard();
                 }
-                else if (commandTokens.Length > 1 && commandTokens[1] == "print_acp_map")
+                else if (commandTokens.Length > 1 && commandTokens[1] == "print_adp_map")
                 {
                     MoveGen.GenerateMoves(ref board, []);
-                    board.PrintAttackCheckPinMap();
+                    board.PrintAttackDefendPinMap();
                 }
                 break;
             default:

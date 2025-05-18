@@ -6,14 +6,14 @@ public static class AttackCheckPin
 {
     public const int AttackCheckPinLength = 192;
     public const byte Attack = 1;
-    public const byte Check = 2;
+    public const byte Defend = 2;
     public const byte Pin = 4;
 
     public static string ToString(byte attackCheckPin)
     {
         var acp = new StringBuilder()
             .Append((attackCheckPin & Attack) == Attack ? "A" : string.Empty)
-            .Append((attackCheckPin & Check) == Check ? "C" : string.Empty)
+            .Append((attackCheckPin & Defend) == Defend ? "D" : string.Empty)
             .Append((attackCheckPin & Pin) == Pin ? "P" : string.Empty)
             .ToString();
         if (acp.Length == 0)
