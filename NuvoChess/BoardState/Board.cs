@@ -10,7 +10,8 @@ public ref struct Board
     public Span<byte> AttackDefendPinMap { get; set; }
     public byte Checks { get; set; }
     public byte CastleRights { get; set; }
-    public byte EnPassantSquare { get; set; }
+    public byte EpSquare { get; set; }
+    public byte EpPawnSquare { get; set; }
     public int HalfMove { get; set; }
     public int FullMove { get; set; }
 
@@ -35,7 +36,7 @@ public ref struct Board
         SetPiecesAndSquares(pieces);
         SetSideToMove(stm);
         SetCastleRights(cr);
-        EnPassantSquare = SquareIndex.SquareNameToIndex.TryGetValue(ep, out var epIndex) ? epIndex : (byte)0;
+        SetEpSquare(ep);
         HalfMove = short.TryParse(hm, out var halfMove) ? halfMove : 0;
         FullMove = short.TryParse(fm, out var fullMove) ? fullMove : 1;
     }
@@ -45,7 +46,7 @@ public ref struct Board
         var backgroundColor = ConsoleColor.DarkBlue;
         var sideToMove = Stm == PieceType.WhitePiece ? "White" : "Black";
         var castleRights = Castling.ToString(CastleRights);
-        var enPassantSquare = EnPassantSquare == 0 ? "-" : SquareIndex.SquareIndexToName[EnPassantSquare];
+        var enPassantSquare = EpSquare == 0 ? "-" : SquareIndex.SquareIndexToName[EpSquare];
         Console.WriteLine($"Side to move: {sideToMove}");
         Console.WriteLine($"Castle rights: {castleRights}");
         Console.WriteLine($"En passant square: {enPassantSquare}");
@@ -79,7 +80,7 @@ public ref struct Board
         var backgroundColor = ConsoleColor.DarkBlue;
         var sideToMove = Stm == PieceType.WhitePiece ? "White" : "Black";
         var castleRights = Castling.ToString(CastleRights);
-        var enPassantSquare = EnPassantSquare == 0 ? "-" : SquareIndex.SquareIndexToName[EnPassantSquare];
+        var enPassantSquare = EpSquare == 0 ? "-" : SquareIndex.SquareIndexToName[EpSquare];
         Console.WriteLine($"Side to move: {sideToMove}");
         Console.WriteLine($"Castle rights: {castleRights}");
         Console.WriteLine($"En passant square: {enPassantSquare}");
@@ -120,7 +121,7 @@ public ref struct Board
             {
                 var index = i * 8 + j;
                 var squareIndex = SquareIndex.OnBoardSquares[index];
-                var attackPin = AttackCheckPin.ToString(AttackDefendPinMap[squareIndex]);
+                var attackPin = AttackDefendPin.ToString(AttackDefendPinMap[squareIndex]);
                 backgroundColor = SetConsoleColor(true, backgroundColor);
                 Console.Write($"{attackPin}");
                 Console.ResetColor();
@@ -254,6 +255,19 @@ public ref struct Board
                     CastleRights |= Castling.BlackQueen;
                     break;
             }
+        }
+    }
+
+    private void SetEpSquare(string ep)
+    {
+        EpSquare = SquareIndex.SquareNameToIndex.TryGetValue(ep, out var epIndex) ? epIndex : (byte)0;
+        if (EpSquare != 0)
+        {
+            EpPawnSquare = Stm == PieceType.WhitePiece ? (byte)(EpSquare + 16) : (byte)(EpSquare - 16);
+        }
+        else
+        {
+            EpPawnSquare = 0;
         }
     }
 }

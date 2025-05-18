@@ -2,12 +2,13 @@ using System.Text;
 
 namespace NuvoChess.BoardState;
 
-public static class AttackCheckPin
+public static class AttackDefendPin
 {
     public const int AttackCheckPinLength = 192;
     public const byte Attack = 1;
     public const byte Defend = 2;
     public const byte Pin = 4;
+    public const byte EpPin = 8;
 
     public static string ToString(byte attackCheckPin)
     {
@@ -15,6 +16,7 @@ public static class AttackCheckPin
             .Append((attackCheckPin & Attack) == Attack ? "A" : string.Empty)
             .Append((attackCheckPin & Defend) == Defend ? "D" : string.Empty)
             .Append((attackCheckPin & Pin) == Pin ? "P" : string.Empty)
+            .Append((attackCheckPin & EpPin) == EpPin ? "E" : string.Empty)
             .ToString();
         if (acp.Length == 0)
         {

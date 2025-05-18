@@ -16,6 +16,16 @@ public static class PieceType
     public const byte PieceMask = 14;
     public const byte ColorMask = 48;
 
+    public static bool IsEmptySquare(byte piece)
+    {
+        return piece == EmptySquare;
+    }
+
+    public static bool IsGuardSquare(byte piece)
+    {
+        return piece == GuardSquare;
+    }
+
     public static bool IsPawnPiece(byte piece)
     {
         return (piece & PawnPiece) == PawnPiece;

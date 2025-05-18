@@ -137,7 +137,7 @@ public static class MoveGen
             }
             else
             {
-                GenerateSliderAdpMap(ref board, moves, fromIndex, pieceType, oppKingIndex);
+                GenerateSliderAdpMap(ref board, moves, fromIndex, oppKingIndex);
             }
         }
     }
@@ -148,26 +148,27 @@ public static class MoveGen
         {
             var toIndex = fromIndex + moves[i];
             var toSquare = board.Squares[toIndex];
-            if (toSquare == PieceType.GuardSquare) continue;
+            if (PieceType.IsGuardSquare(toSquare)) continue;
 
-            if (toSquare == PieceType.EmptySquare)
+            if (PieceType.IsEmptySquare(toSquare))
             {
-                board.AttackDefendPinMap[toIndex] |= AttackCheckPin.Attack;
+                board.AttackDefendPinMap[toIndex] |= AttackDefendPin.Attack;
             }
             else
             {
-                board.AttackDefendPinMap[toIndex] |= AttackCheckPin.Attack;
+                board.AttackDefendPinMap[toIndex] |= AttackDefendPin.Attack;
                 if (toIndex == oppKingIndex)
                 {
                     board.Checks += 1;
-                    board.AttackDefendPinMap[fromIndex] |= AttackCheckPin.Defend;
+                    board.AttackDefendPinMap[fromIndex] |= AttackDefendPin.Defend;
                 }
             }
         }
     }
 
-    private static void GenerateSliderAdpMap(ref Board board, int[] moves, int fromIndex, byte pieceType, int oppKingIndex)
+    private static void GenerateSliderAdpMap(ref Board board, int[] moves, int fromIndex, int oppKingIndex)
     {
+        var fromSquare = board.Squares[fromIndex];
         for (var i = 0; i < moves.Length; i++)
         {
             var direction = moves[i];
@@ -176,18 +177,23 @@ public static class MoveGen
             {
                 toIndex += direction;
                 var toSquare = board.Squares[toIndex];
-                if (toSquare == PieceType.GuardSquare)
+                if (PieceType.IsGuardSquare(toSquare))
                 {
                     break;
                 }
-                else if (toSquare == PieceType.EmptySquare)
+                else if (PieceType.IsEmptySquare(toSquare))
                 {
-                    board.AttackDefendPinMap[toIndex] |= AttackCheckPin.Attack;
+                    board.AttackDefendPinMap[toIndex] |= AttackDefendPin.Attack;
                 }
                 else
                 {
-                    board.AttackDefendPinMap[toIndex] |= AttackCheckPin.Attack;
-                    if (PieceType.IsSameColorPiece(pieceType, board.Pieces[toSquare].PieceType))
+                    board.AttackDefendPinMap[toIndex] |= AttackDefendPin.Attack;
+                    if (IsPossibleEpPin(ref board, toIndex, toIndex + direction, direction))
+                    {
+                        GeneratePinSliderAdpMap(ref board, toIndex + direction, direction, oppKingIndex, AttackDefendPin.EpPin);
+                        break;
+                    }
+                    else if (PieceType.IsSameColorPiece(board.Pieces[fromSquare].PieceType, board.Pieces[toSquare].PieceType))
                     {
                         break;
                     }
@@ -195,15 +201,30 @@ public static class MoveGen
                     {
                         board.Checks += 1;
                         GenerateDefendSliderAdpMap(ref board, toIndex, fromIndex, direction * -1);
+                        break;
                     }
                     else
                     {
-                        GeneratePinSliderAdpMap(ref board, toIndex, direction, oppKingIndex);
+                        GeneratePinSliderAdpMap(ref board, toIndex, direction, oppKingIndex, AttackDefendPin.Pin);
                         break;
                     }
                 }
             }
         }
+    }
+
+    private static bool IsPossibleEpPin(ref Board board, int squareIndex1, int squareIndex2, int direction)
+    {
+        var square1 = board.Squares[squareIndex1];
+        var square2 = board.Squares[squareIndex2];
+        if ((direction != -1 && direction != 1)
+            || board.EpPawnSquare == 0
+            || (squareIndex1 != board.EpPawnSquare && squareIndex2 != board.EpPawnSquare)
+            || !PieceType.IsPawnPiece(board.Pieces[square1].PieceType)
+            || !PieceType.IsPawnPiece(board.Pieces[square2].PieceType))
+            return false;
+
+        return true;
     }
 
     private static void GenerateDefendSliderAdpMap(ref Board board, int toIndex, int fromIndex, int direction)
@@ -212,12 +233,12 @@ public static class MoveGen
         while (true)
         {
             currentIndex += direction;
-            board.AttackDefendPinMap[currentIndex] |= AttackCheckPin.Defend;
+            board.AttackDefendPinMap[currentIndex] |= AttackDefendPin.Defend;
             if (currentIndex == fromIndex) break;
         }
     }
 
-    private static void GeneratePinSliderAdpMap(ref Board board, int fromIndex, int direction, int oppKingIndex)
+    private static void GeneratePinSliderAdpMap(ref Board board, int fromIndex, int direction, int oppKingIndex, byte pinType)
     {
         var possiblePin = s_rayDetection[fromIndex - oppKingIndex + _rayDetectionOffset] == direction;
         if (!possiblePin) return;
@@ -227,9 +248,9 @@ public static class MoveGen
         {
             pinIndex += direction;
             var pinSquare = board.Squares[pinIndex];
-            if (pinSquare == PieceType.EmptySquare) continue;
+            if (PieceType.IsEmptySquare(pinSquare)) continue;
 
-            if (pinSquare == PieceType.GuardSquare)
+            if (PieceType.IsGuardSquare(pinSquare))
             {
                 break;
             }
@@ -237,7 +258,7 @@ public static class MoveGen
             {
                 if (pinIndex == oppKingIndex)
                 {
-                    board.AttackDefendPinMap[fromIndex] |= AttackCheckPin.Pin;
+                    board.AttackDefendPinMap[fromIndex] |= pinType;
                 }
                 break;
             }
