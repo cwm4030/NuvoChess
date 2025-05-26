@@ -17,13 +17,13 @@ public ref struct Board(Span<Piece> pieces, Span<byte> squares, Span<byte> attac
 
     public void SetFromFen(string fen)
     {
-        var fenStrs = fen.Split(' ').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
-        var fenPieces = fenStrs.Length >= 1 ? fenStrs[0] : string.Empty;
-        var stm = (fenStrs.Length >= 2 ? fenStrs[1] : string.Empty).ToLower();
-        var cr = fenStrs.Length >= 3 ? fenStrs[2] : string.Empty;
-        var ep = (fenStrs.Length >= 4 ? fenStrs[3] : string.Empty).ToLower();
-        var hm = (fenStrs.Length >= 5 ? fenStrs[4] : string.Empty).ToLower();
-        var fm = (fenStrs.Length >= 6 ? fenStrs[5] : string.Empty).ToLower();
+        var fenStrings = fen.Split(' ').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+        var fenPieces = fenStrings.Length >= 1 ? fenStrings[0] : string.Empty;
+        var stm = (fenStrings.Length >= 2 ? fenStrings[1] : string.Empty).ToLower();
+        var cr = fenStrings.Length >= 3 ? fenStrings[2] : string.Empty;
+        var ep = (fenStrings.Length >= 4 ? fenStrings[3] : string.Empty).ToLower();
+        var hm = (fenStrings.Length >= 5 ? fenStrings[4] : string.Empty).ToLower();
+        var fm = (fenStrings.Length >= 6 ? fenStrings[5] : string.Empty).ToLower();
 
         ClearPiecesAndSquares();
         SetPiecesAndSquares(fenPieces);
