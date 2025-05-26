@@ -4,7 +4,7 @@ namespace NuvoChess.UniversalChessInterface;
 
 public static class Uci
 {
-    public static bool Exec(ref Board board, string command)
+    public static bool Exec(ref Board board, ref MoveList moveList, string command)
     {
         var commandTokens = command.Split(' ').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
         if (commandTokens.Length == 0) return true;
@@ -41,10 +41,12 @@ public static class Uci
                         board.PrintSimpleBoard();
                         break;
                     case > 1 when commandTokens[1] == "print_adp_map":
-                        Span<Move> moveList = new Move[256];
-                        var moveIndex = 0;
-                        MoveGen.GenerateMoves(ref board, ref moveList, ref moveIndex);
+                        MoveGen.GenerateMoves(ref board, ref moveList);
                         board.PrintAttackDefendPinMap();
+                        break;
+                    case > 1 when commandTokens[1] == "print_moves":
+                        MoveGen.GenerateMoves(ref board, ref moveList);
+                        moveList.PrintMoves();
                         break;
                 }
                 break;

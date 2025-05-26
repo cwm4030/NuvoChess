@@ -11,8 +11,9 @@ public static class Program
         Span<byte> squares = stackalloc byte[SquareIndex.SquareListLength];
         Span<byte> attackCheckPinMap = stackalloc byte[AttackDefendPin.AttackCheckPinLength];
         var board = new Board(pieces, squares, attackCheckPinMap);
+        var moveList = new MoveList(stackalloc Move[256]);
         var input = "position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        while (Uci.Exec(ref board, input))
+        while (Uci.Exec(ref board, ref moveList, input))
         {
             input = Console.ReadLine() ?? string.Empty;
         }
