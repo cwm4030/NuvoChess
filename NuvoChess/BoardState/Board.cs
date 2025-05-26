@@ -1,13 +1,13 @@
 namespace NuvoChess.BoardState;
 
-public ref struct Board
+public ref struct Board(Span<Piece> pieces, Span<byte> squares, Span<byte> attackCheckPinMap)
 {
     public byte Stm { get; set; }
     public byte WhitePieceCount { get; set; }
     public byte BlackPieceCount { get; set; }
-    public Span<Piece> Pieces { get; set; }
-    public Span<byte> Squares { get; set; }
-    public Span<byte> AttackDefendPinMap { get; set; }
+    public Span<Piece> Pieces { get; set; } = pieces;
+    public Span<byte> Squares { get; set; } = squares;
+    public Span<byte> AttackDefendPinMap { get; set; } = attackCheckPinMap;
     public byte Checks { get; set; }
     public byte CastleRights { get; set; }
     public byte EpSquare { get; set; }
@@ -15,17 +15,10 @@ public ref struct Board
     public int HalfMove { get; set; }
     public int FullMove { get; set; }
 
-    public Board(Span<Piece> pieces, Span<byte> squares, Span<byte> attackCheckPinMap)
-    {
-        Pieces = pieces;
-        Squares = squares;
-        AttackDefendPinMap = attackCheckPinMap;
-    }
-
     public void SetFromFen(string fen)
     {
         var fenStrs = fen.Split(' ').Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
-        var pieces = fenStrs.Length >= 1 ? fenStrs[0] : string.Empty;
+        var fenPieces = fenStrs.Length >= 1 ? fenStrs[0] : string.Empty;
         var stm = (fenStrs.Length >= 2 ? fenStrs[1] : string.Empty).ToLower();
         var cr = fenStrs.Length >= 3 ? fenStrs[2] : string.Empty;
         var ep = (fenStrs.Length >= 4 ? fenStrs[3] : string.Empty).ToLower();
@@ -33,7 +26,7 @@ public ref struct Board
         var fm = (fenStrs.Length >= 6 ? fenStrs[5] : string.Empty).ToLower();
 
         ClearPiecesAndSquares();
-        SetPiecesAndSquares(pieces);
+        SetPiecesAndSquares(fenPieces);
         SetSideToMove(stm);
         SetCastleRights(cr);
         SetEpSquare(ep);
@@ -61,7 +54,7 @@ public ref struct Board
                 var onBoardIndex = SquareIndex.OnBoardSquares[index];
                 var square = Squares[onBoardIndex];
                 var piece = Pieces[square].PieceType;
-                var fen = Fen.PieceToFen.TryGetValue(piece, out var fenPiece) ? fenPiece : ' ';
+                var fen = Fen.PieceToFen.GetValueOrDefault(piece, ' ');
 
                 backgroundColor = SetConsoleColor(PieceType.IsWhitePiece(piece), backgroundColor);
                 Console.Write($" {fen} ");
@@ -95,7 +88,7 @@ public ref struct Board
                 var onBoardIndex = SquareIndex.OnBoardSquares[index];
                 var square = Squares[onBoardIndex];
                 var piece = Pieces[square].PieceType;
-                var fen = Fen.PieceToSimpleFen.TryGetValue(piece, out var fenPiece) ? fenPiece : ' ';
+                var fen = Fen.PieceToSimpleFen.GetValueOrDefault(piece, ' ');
 
                 backgroundColor = SetConsoleColor(PieceType.IsWhitePiece(piece), backgroundColor);
                 Console.Write($" {fen} ");
@@ -171,18 +164,16 @@ public ref struct Board
             if (index >= SquareIndex.OnBoardSquares.Length) break;
             var squareIndex = SquareIndex.OnBoardSquares[index];
 
-            if (Fen.FenToPiece.TryGetValue(c, out var p))
+            if (!Fen.FenToPiece.TryGetValue(c, out var p)) continue;
+            var (piece, isPiece) = p;
+            if (isPiece)
             {
-                var (piece, isPiece) = p;
-                if (isPiece)
-                {
-                    SetPieceAndSquare(piece, squareIndex);
-                    index += 1;
-                }
-                else
-                {
-                    index += piece;
-                }
+                SetPieceAndSquare(piece, squareIndex);
+                index += 1;
+            }
+            else
+            {
+                index += piece;
             }
         }
     }
@@ -229,10 +220,7 @@ public ref struct Board
 
     private void SetSideToMove(string stm)
     {
-        if (stm == "w")
-            Stm = PieceType.WhitePiece;
-        else
-            Stm = PieceType.BlackPiece;
+        Stm = stm == "w" ? PieceType.WhitePiece : PieceType.BlackPiece;
     }
 
     private void SetCastleRights(string cr)
@@ -260,7 +248,7 @@ public ref struct Board
 
     private void SetEpSquare(string ep)
     {
-        EpSquare = SquareIndex.SquareNameToIndex.TryGetValue(ep, out var epIndex) ? epIndex : (byte)0;
+        EpSquare = SquareIndex.SquareNameToIndex.GetValueOrDefault(ep, (byte)0);
         if (EpSquare != 0)
         {
             EpPawnSquare = Stm == PieceType.WhitePiece ? (byte)(EpSquare + 16) : (byte)(EpSquare - 16);

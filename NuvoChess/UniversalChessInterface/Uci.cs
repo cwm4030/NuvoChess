@@ -23,27 +23,29 @@ public static class Uci
             case "quit":
                 return false;
             case "position":
-                if (commandTokens.Length > 2 && commandTokens[1] == "fen")
+                switch (commandTokens.Length)
                 {
-                    var fen = string.Join(' ', commandTokens.Skip(2));
-                    board.SetFromFen(fen);
-                }
-                else if (commandTokens.Length > 1 && commandTokens[1] == "startpos")
-                {
-                    board.SetFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-                }
-                else if (commandTokens.Length > 1 && commandTokens[1] == "print")
-                {
-                    board.PrintBoard();
-                }
-                else if (commandTokens.Length > 1 && commandTokens[1] == "print_simple")
-                {
-                    board.PrintSimpleBoard();
-                }
-                else if (commandTokens.Length > 1 && commandTokens[1] == "print_adp_map")
-                {
-                    MoveGen.GenerateMoves(ref board, []);
-                    board.PrintAttackDefendPinMap();
+                    case > 2 when commandTokens[1] == "fen":
+                    {
+                        var fen = string.Join(' ', commandTokens.Skip(2));
+                        board.SetFromFen(fen);
+                        break;
+                    }
+                    case > 1 when commandTokens[1] == "startpos":
+                        board.SetFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+                        break;
+                    case > 1 when commandTokens[1] == "print":
+                        board.PrintBoard();
+                        break;
+                    case > 1 when commandTokens[1] == "print_simple":
+                        board.PrintSimpleBoard();
+                        break;
+                    case > 1 when commandTokens[1] == "print_adp_map":
+                        Span<Move> moveList = new Move[256];
+                        var moveIndex = 0;
+                        MoveGen.GenerateMoves(ref board, ref moveList, ref moveIndex);
+                        board.PrintAttackDefendPinMap();
+                        break;
                 }
                 break;
             default:
