@@ -63,6 +63,7 @@ public static class MoveGen
     public static void GenerateMoves(ref Board board, ref MoveList moveList)
     {
         GenerateAdpMap(ref board);
+        moveList.MoveCount = 0;
         var startPieceIndex = board.Stm == PieceType.WhitePiece ? PieceIndex.WhiteKingIndex : PieceIndex.BlackKingIndex;
         var stopPieceIndex = startPieceIndex + 16;
 
@@ -102,25 +103,14 @@ public static class MoveGen
     
     private static void GeneratePawnMoves(ref Board board, ref MoveList moveList, int fromIndex, int[] moves)
     {
+        GeneratePawnAttackMoves(ref board, ref moveList, fromIndex, moves);
         var upOneIndex = fromIndex + moves[0];
         var upTwoIndex = fromIndex + moves[1];
         var isPromotion = s_pawnPromotionSquares[upOneIndex] == board.Stm;
-        for (var i = 2; i < moves.Length; i++)
-        {
-            var captureIndex = fromIndex + moves[i];
-            var captureSquare = board.Squares[captureIndex];
-            var capturePiece = board.Pieces[captureSquare];
-            if ((PieceType.IsEmptySquare(board.Squares[captureSquare]) && captureSquare != board.EpSquare)
-                || PieceType.IsGuardSquare(captureSquare)
-                || PieceType.IsSameColorPiece(board.Stm, capturePiece.PieceType))
-                continue;
-            AddMove(ref board, ref moveList, fromIndex, captureIndex);
-        }
-
         if (!PieceType.IsEmptySquare(board.Squares[upOneIndex])) return;
         if (isPromotion)
         {
-            for (var promotionPiece = PieceType.PawnPiece; promotionPiece <= PieceType.QueenPiece; promotionPiece += 2)
+            for (var promotionPiece = PieceType.KnightPiece; promotionPiece <= PieceType.QueenPiece; promotionPiece += 2)
             {
                 AddMove(ref board, ref moveList, fromIndex, upOneIndex, promotionPiece);
             }
@@ -133,6 +123,32 @@ public static class MoveGen
         if (s_pawnStartSquares[fromIndex] == board.Stm && PieceType.IsEmptySquare(board.Squares[upTwoIndex]))
         {
             AddMove(ref board, ref moveList, fromIndex, upTwoIndex);
+        }
+    }
+
+    private static void GeneratePawnAttackMoves(ref Board board, ref MoveList moveList, int fromIndex, int[] moves)
+    {
+        for (var i = 2; i < moves.Length; i++)
+        {
+            var captureIndex = fromIndex + moves[i];
+            var captureSquare = board.Squares[captureIndex];
+            var capturePiece = board.Pieces[captureSquare];
+            if ((PieceType.IsEmptySquare(captureSquare) && captureIndex != board.EpSquare)
+                || PieceType.IsGuardSquare(captureSquare)
+                || PieceType.IsSameColorPiece(board.Stm, capturePiece.PieceType))
+                continue;
+            var isCapturePromotion = s_pawnPromotionSquares[captureIndex] == board.Stm;
+            if (isCapturePromotion)
+            {
+                for (var promotionPiece = PieceType.KnightPiece; promotionPiece <= PieceType.QueenPiece; promotionPiece += 2)
+                {
+                    AddMove(ref board, ref moveList, fromIndex, captureIndex, promotionPiece);
+                }
+            }
+            else
+            {
+                AddMove(ref board, ref moveList, fromIndex, captureIndex);
+            }
         }
     }
     
@@ -177,31 +193,31 @@ public static class MoveGen
         var fromIndex = board.Stm == PieceType.WhitePiece ? SquareIndex.E1 : SquareIndex.E8;
         if (board.Stm == PieceType.WhitePiece
             && (board.CastleRights & Castling.WhiteKing) == Castling.WhiteKing
-            && board.AttackDefendPinMap[SquareIndex.F1] == 0
-            && board.AttackDefendPinMap[SquareIndex.G1] == 0)
+            && PieceType.IsEmptySquare(board.Squares[SquareIndex.F1]) && board.AttackDefendPinMap[SquareIndex.F1] == 0
+            && PieceType.IsEmptySquare(board.Squares[SquareIndex.G1]) && board.AttackDefendPinMap[SquareIndex.G1] == 0)
         {
             AddMove(ref board, ref moveList, fromIndex, SquareIndex.G1);
         }
         if (board.Stm == PieceType.WhitePiece
             && (board.CastleRights & Castling.WhiteQueen) == Castling.WhiteQueen
-            && board.AttackDefendPinMap[SquareIndex.D1] == 0
-            && board.AttackDefendPinMap[SquareIndex.C1] == 0
-            && board.AttackDefendPinMap[SquareIndex.B1] == 0)
+            && PieceType.IsEmptySquare(board.Squares[SquareIndex.D1]) && board.AttackDefendPinMap[SquareIndex.D1] == 0
+            && PieceType.IsEmptySquare(board.Squares[SquareIndex.C1]) && board.AttackDefendPinMap[SquareIndex.C1] == 0
+            && PieceType.IsEmptySquare(board.Squares[SquareIndex.B1]) && board.AttackDefendPinMap[SquareIndex.B1] == 0)
         {
             AddMove(ref board, ref moveList, fromIndex, SquareIndex.C1);
         }
         if (board.Stm == PieceType.BlackPiece
             && (board.CastleRights & Castling.BlackKing) == Castling.BlackKing
-            && board.AttackDefendPinMap[SquareIndex.F8] == 0
-            && board.AttackDefendPinMap[SquareIndex.G8] == 0)
+            && PieceType.IsEmptySquare(board.Squares[SquareIndex.F8]) && board.AttackDefendPinMap[SquareIndex.F8] == 0
+            && PieceType.IsEmptySquare(board.Squares[SquareIndex.G8]) && board.AttackDefendPinMap[SquareIndex.G8] == 0)
         {
             AddMove(ref board, ref moveList, fromIndex, SquareIndex.G8);
         }
         if (board.Stm == PieceType.BlackPiece
             && (board.CastleRights & Castling.BlackQueen) == Castling.BlackQueen
-            && board.AttackDefendPinMap[SquareIndex.D8] == 0
-            && board.AttackDefendPinMap[SquareIndex.C8] == 0
-            && board.AttackDefendPinMap[SquareIndex.B8] == 0)
+            && PieceType.IsEmptySquare(board.Squares[SquareIndex.D8]) && board.AttackDefendPinMap[SquareIndex.D8] == 0
+            && PieceType.IsEmptySquare(board.Squares[SquareIndex.C8]) && board.AttackDefendPinMap[SquareIndex.C8] == 0
+            && PieceType.IsEmptySquare(board.Squares[SquareIndex.B8]) && board.AttackDefendPinMap[SquareIndex.B8] == 0)
         {
             AddMove(ref board, ref moveList, fromIndex, SquareIndex.C8);
         }
@@ -215,11 +231,11 @@ public static class MoveGen
         var toPiece = board.Pieces[toSquare];
         if (PieceType.IsGuardSquare(toSquare)
             || PieceType.IsSameColorPiece(fromPiece.PieceType, toPiece.PieceType)
-            || board.AttackDefendPinMap[fromIndex] == AttackDefendPin.Pin
+            || AttackDefendPin.IsPinned(board.AttackDefendPinMap[fromIndex])
             || (PieceType.IsPawnPiece(fromPiece.PieceType) && board.AttackDefendPinMap[toIndex] == AttackDefendPin.EpPin)
             || (board.Checks > 1 && !PieceType.IsKingPiece(fromPiece.PieceType))
             || (PieceType.IsKingPiece(fromPiece.PieceType) && board.AttackDefendPinMap[toIndex] != 0)
-            || (board.Checks == 1 && !PieceType.IsKingPiece(fromPiece.PieceType) && board.AttackDefendPinMap[toIndex] != AttackDefendPin.Defend))
+            || (board.Checks == 1 && !PieceType.IsKingPiece(fromPiece.PieceType) && !AttackDefendPin.IsDefend(board.AttackDefendPinMap[toIndex])))
             return;
 
         moveList.Add(fromIndex, toIndex, promotionPiece);

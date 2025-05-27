@@ -10,6 +10,26 @@ public static class AttackDefendPin
     public const byte Pin = 4;
     public const byte EpPin = 8;
 
+    public static bool IsAttacked(byte attackCheckPin)
+    {
+        return (attackCheckPin & Attack) == Attack;
+    }
+    
+    public static bool IsDefend(byte attackCheckPin)
+    {
+        return (attackCheckPin & Defend) == Defend;
+    }
+    
+    public static bool IsPinned(byte attackCheckPin)
+    {
+        return (attackCheckPin & Pin) == Pin;
+    }
+    
+    public static bool IsEpPinned(byte attackCheckPin)
+    {
+        return (attackCheckPin & EpPin) == EpPin;
+    }
+
     public static string ToString(byte attackCheckPin)
     {
         var acp = new StringBuilder()

@@ -28,32 +28,32 @@ public static class PieceType
 
     public static bool IsPawnPiece(byte piece)
     {
-        return (piece & PawnPiece) == PawnPiece;
+        return (piece & PieceMask) == PawnPiece;
     }
 
     public static bool IsKnightPiece(byte piece)
     {
-        return (piece & KnightPiece) == KnightPiece;
+        return (piece & PieceMask) == KnightPiece;
     }
 
     public static bool IsBishopPiece(byte piece)
     {
-        return (piece & BishopPiece) == BishopPiece;
+        return (piece & PieceMask) == BishopPiece;
     }
 
     public static bool IsRookPiece(byte piece)
     {
-        return (piece & RookPiece) == RookPiece;
+        return (piece & PieceMask) == RookPiece;
     }
 
     public static bool IsQueenPiece(byte piece)
     {
-        return (piece & QueenPiece) == QueenPiece;
+        return (piece & PieceMask) == QueenPiece;
     }
 
     public static bool IsKingPiece(byte piece)
     {
-        return (piece & KingPiece) == KingPiece;
+        return (piece & PieceMask) == KingPiece;
     }
 
     public static bool IsSameColorPiece(byte piece1, byte piece2)

@@ -26,5 +26,6 @@ public ref struct MoveList(Span<Move> moves)
                         : string.Empty;
             Console.WriteLine($"{i + 1}. {fromSquare}{toSquare}{promotionPiece}");
         }
+        Console.WriteLine();
     }
 }
